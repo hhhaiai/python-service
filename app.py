@@ -13,7 +13,7 @@ import json
 
 app = Flask(title="gugu",
     description="High-performance API service",
-    version="1.0.4|2025.2.7")
+    version="1.0.5|2025.2.7")
 # 确保 JSON 响应不使用 ASCII 编码
 app.json.ensure_ascii = False
 
