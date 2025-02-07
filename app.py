@@ -45,12 +45,46 @@ def read_config_section_to_dict( section='SERVER'):
     return re_dict
 
 
+try:
+    _config = read_config_section_to_dict()
+except BaseException as e:
+    _e = e
+    _config = {}
+
+SERVER_ADDRESSES = _config.get('nacos_host', "")  # Nacos 服务器地址
+NAMESPACE = ""  # 使用的命名空间，可以为空，表示使用默认命名空间
+SERVICE_NAME = _config.get('nacos_service_name', "")  # 注册到 Nacos 的服务名称
+GROUP_NAME = _config.get('nacos_group_name', "")  # 服务所属的组
+IP = _config.get('server_host', "")  # 服务的 IP 地址
+PORT = int(_config.get('server_port', 443))  # 服务的端口号
+
+# ERROR_COUNTER = Counter('http_500_errors_total', 'Total number of HTTP 500 errors')
+ERROR_COUNT = 0
 
 def beat_callback():
     _t = gt.health()
     client.client.add_naming_instance(
         SERVICE_NAME, IP, PORT, cluster_name="DEFAULT", group_name=GROUP_NAME, ephemeral=True, metadata={"heartbeat_interval": "5"}
     )
+
+
+if SERVER_ADDRESSES:
+    scheduler = BackgroundScheduler(executors=executors, job_defaults=job_defaults)
+    client = naco.NacosClient(SERVER_ADDRESSES, NAMESPACE)
+
+    beat_callback()
+    scheduler.add_job(
+        func=beat_callback,
+        trigger=IntervalTrigger(seconds=7),
+        id='example_job',
+        name='示例任务',
+        replace_existing=True
+    )
+
+    if not scheduler.running:
+        scheduler.start()
+
+    atexit.register(lambda: scheduler.shutdown())
 
 
 @app.route('/translate', methods=['POST'])
@@ -110,44 +144,7 @@ def shutdown():
 
 
 
-def register_nacos():
-
-    try:
-        _config = read_config_section_to_dict()
-    except BaseException as e:
-        _e = e
-        _config = {}
-
-    SERVER_ADDRESSES = _config.get('nacos_host', "")  # Nacos 服务器地址
-    NAMESPACE = ""  # 使用的命名空间，可以为空，表示使用默认命名空间
-    SERVICE_NAME = _config.get('nacos_service_name', "")  # 注册到 Nacos 的服务名称
-    GROUP_NAME = _config.get('nacos_group_name', "")  # 服务所属的组
-    IP = _config.get('server_host', "")  # 服务的 IP 地址
-    PORT = int(_config.get('server_port', 443))  # 服务的端口号
-
-    # ERROR_COUNTER = Counter('http_500_errors_total', 'Total number of HTTP 500 errors')
-    ERROR_COUNT = 0
-
-
-    if SERVER_ADDRESSES:
-        scheduler = BackgroundScheduler(executors=executors, job_defaults=job_defaults)
-        client = naco.NacosClient(SERVER_ADDRESSES, NAMESPACE)
-
-        beat_callback()
-        scheduler.add_job(
-            func=beat_callback,
-            trigger=IntervalTrigger(seconds=7),
-            id='example_job',
-            name='示例任务',
-            replace_existing=True
-        )
-
-        if not scheduler.running:
-            scheduler.start()
-
-        atexit.register(lambda: scheduler.shutdown())
-
 if __name__ == '__main__':
     # start_http_server(CHECK_PORT)
     app.run(debug=False, host='0.0.0.0', port=os.getenv('PORT',7860))
-    register_nacos()
+
