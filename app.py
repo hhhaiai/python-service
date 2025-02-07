@@ -14,7 +14,7 @@ import json
 app = Flask(__name__)  # 基本初始化，参数只接受import_name等标准参数
 
 # 使用app.config存储版本信息和描述
-app.config['VERSION'] = "1.0.6|2025.2.7"
+app.config['VERSION'] = "1.0.7|2025.2.7"
 app.config['DESCRIPTION'] = "High-performance API service"
 
 # 确保 JSON 响应不使用 ASCII 编码
