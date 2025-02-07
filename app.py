@@ -148,6 +148,6 @@ def shutdown():
 
 
 if __name__ == '__main__':
-    # start_http_server(CHECK_PORT)
-    app.run(debug=False, host='0.0.0.0', port=os.getenv('PORT',7860))
+    port = int(os.getenv("PORT", "7860"))
+    app.run(debug=False, host='0.0.0.0', port)
 
