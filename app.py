@@ -11,7 +11,9 @@ import os
 import json
 
 
-app = Flask(__name__)
+app = Flask(title="gugu",
+    description="High-performance API service",
+    version="1.0.4|2025.2.7")
 # 确保 JSON 响应不使用 ASCII 编码
 app.json.ensure_ascii = False
 
@@ -68,6 +70,13 @@ def translate():
         ERROR_COUNT += 1
         return {'code': 500, 'message': f'error: {e}'}
 
+@app.route('/version')
+def get_version():
+    """返回当前服务版本号"""
+    return jsonify({
+        "service": "gugu",
+        "version": app.config['VERSION']
+    })
 
 @app.route('/health', methods=['GET'])
 def health():
