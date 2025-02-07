@@ -29,7 +29,6 @@ class NacosClient:
                                         namespace=namespace_id,
                                         username=username,
                                         password=password,
-                                        logLevel="error",   # 只记录错误日志
                                         logDir="/tmp/logs"  # 修改日志目录到 /tmp/logs
                                         )
         self.endpoint = server_endpoint
