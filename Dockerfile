@@ -13,7 +13,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 复制应用代码到容器中
 COPY . .
 
-RUN mkdir -p /tmp/logs
+RUN mkdir -p /tmp/logs && chmod 777 /tmp/logs
 
 # 暴露端口
 EXPOSE 7860
