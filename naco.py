@@ -28,7 +28,11 @@ class NacosClient:
         self.client = nacos.NacosClient(server_endpoint,
                                         namespace=namespace_id,
                                         username=username,
-                                        password=password)
+                                        password=password,
+                                        no_snapshot=True,  # 禁用快照
+                                        logLevel="error",   # 只记录错误日志
+                                        logDir="/tmp/logs"  # 修改日志目录到 /tmp/logs
+                                        )
         self.endpoint = server_endpoint
         self.service_ip = get_host_ip()
 
