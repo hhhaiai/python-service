@@ -14,7 +14,7 @@ import json
 app = Flask(__name__)  # 基本初始化，参数只接受import_name等标准参数
 
 # 使用app.config存储版本信息和描述
-app.config['VERSION'] = "1.0.7|2025.2.7"
+app.config['VERSION'] = "1.0.8|2025.2.7"
 app.config['DESCRIPTION'] = "High-performance API service"
 
 # 确保 JSON 响应不使用 ASCII 编码
@@ -149,5 +149,5 @@ def shutdown():
 
 if __name__ == '__main__':
     port = int(os.getenv("PORT", "7860"))
-    app.run(debug=False, host='0.0.0.0', port)
+    app.run(debug=False, host='0.0.0.0', port=port)
 
